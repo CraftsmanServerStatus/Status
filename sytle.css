@@ -1,0 +1,82 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, select, button {
+    margin: 10px 0;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+}
+
+input {
+    border: 1px solid #0072ff;
+}
+
+select {
+    background: #0072ff;
+    color: white;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #0072ff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+footer a {
+    color: #00c6ff;
+}
