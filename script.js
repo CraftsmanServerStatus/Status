@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Muestra el mensaje promocional al cargar la página
+    
     document.getElementById('promoMessage').style.display = 'block';
 });
 
@@ -11,10 +11,10 @@ document.getElementById('queryForm').addEventListener('submit', function(e) {
     const serverType = document.getElementById('serverType').value;
     const resultDiv = document.getElementById('result');
     
-    // Oculta el mensaje promocional al hacer una consulta
+ 
     document.getElementById('promoMessage').style.display = 'none';
 
-    // Define el endpoint según el tipo de servidor
+    
     const endpoint = serverType === 'bedrock' 
         ? `https://api.mcsrvstat.us/bedrock/3/${serverIp}${serverPort ? ':' + serverPort : ''}`
         : `https://api.mcsrvstat.us/3/${serverIp}${serverPort ? ':' + serverPort : ''}`;
@@ -55,8 +55,8 @@ document.getElementById('queryForm').addEventListener('submit', function(e) {
         });
 });
 
-// Función para abrir el creador de MOTD
+
 function openMOTDCreator(serverName) {
-    const url = `https://mctools.org/motd?name=${encodeURIComponent(serverName)}`;
+    const url = `https://CraftsmanServerStatus.github.io/status`;
     window.open(url, '_blank');
             }
