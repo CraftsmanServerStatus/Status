@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Consulta Servidores Craftsman 🌟</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ffcc00, #ff6699);
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background-color: #007BFF;
+            padding: 20px;
+            color: white;
+            border-radius: 0 0 15px 15px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 3em;
+        }
+        h2 {
+            margin: 10px 0;
+            font-size: 1.5em;
+        }
+        form {
+            margin: 20px auto;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        input[type="text"], select {
+            padding: 10px;
+            margin-right: 10px;
+            border: 2px solid #007BFF;
+            border-radius: 4px;
+            width: calc(50% - 10px);
+        }
+        input[type="submit"] {
+            padding: 10px 15px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1.1em;
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        #promoMessage {
+            padding: 15px;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            background-color: #fff3cd;
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: center;
+            display: none;
+            font-size: 1.2em;
+            position: relative;
+        }
+        #promoMessage span {
+            color: #856404;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌈 Consulta Servidores Craftsman 🌈</h1>
+        <h2>Obtén información de tus servidores de Craftsman Bedrock y Java.</h2>
+    </header>
+    
+    <div id="promoMessage">
+        <p>🌟 ¿Te interesa un servidor survival para Craftsman 0.15.10? Prueba <strong>BubbleLand</strong>: 
+            <span onclick="window.open('http://bubbleland.holynodes.com', '_blank')">🌍 bubbleland.holynodes.com</span> en el puerto <strong>25570</strong>. ⚔️
+        </p>
+    </div>
+
+    <form id="queryForm">
+        <input type="text" id="serverIp" placeholder="🔍 Dirección IP" required>
+        <input type="text" id="serverPort" placeholder="🔌 Puerto (opcional)">
+        <select id="serverType">
+            <option value="java">Java ☕</option>
+            <option value="bedrock">Bedrock 💎</option>
+        </select>
+        <input type="submit" value="🕵️ Consultar">
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('promoMessage').style.display = 'block';
+        });
+
+        document.getElementById('queryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const serverIp = document.getElementById('serverIp').value;
+            const serverPort = document.getElementById('serverPort').value || '';
+            const serverType = document.getElementById('serverType').value;
+            const resultDiv = document.getElementById('result');
+            document.getElementById('promoMessage').style.display = 'none';
+            const endpoint = serverType === 'bedrock' 
+                ? `https://api.mcsrvstat.us/bedrock/3/${serverIp}${serverPort ? ':' + serverPort : ''}`
+                : `https://api.mcsrvstat.us/3/${serverIp}${serverPort ? ':' + serverPort : ''}`;
+            fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.online) {
+                        const { hostname, players, version, motd, port, protocol, cache } = data;
+                        const playersOnline = players.online || 0;
+                        const playersMax = players.max || 0;
+                        const motdText = motd.clean ? motd.clean.join('<br>') : "No disponible";
+                        resultDiv.innerHTML = `
+                            <h3>🏰 ${hostname || "Servidor Desconocido"}</h3>
+                            <p><strong>ServerName:</strong> ${motdText}</p>
+                            <p><strong>Jugadores:</strong> ${playersOnline} / ${playersMax}</p>
+                            <p><strong>Versión:</strong> ${version}</p>
+                            <p><strong>Dirección IP:</strong> ${serverIp}</p>
+                            <p><strong>Puerto:</strong> ${port || serverPort}</p>
+                            <p><strong>Versión del protocolo:</strong> ${protocol?.name || "No disponible"}</p>
+                            <button onclick="openMOTDCreator('${hostname}')">✏️ Abrir en creador de MOTD</button>
+                            <p class="cache-time">Consulta realizada el: ${cache ? new Date(cache * 1000).toLocaleString() : "No disponible"}</p>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `<p>⚠️ Error: El servidor está offline o no existe.</p>`;
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `<p>⚠️ Error al consultar el servidor. ${error.message}</p>`;
+                    console.error(error);
+                });
+        });
+
+        function openMOTDCreator(serverName) {
+            const url = `https://mctools.org/motd?name=${encodeURIComponent(serverName)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+    <footer>
+        <p>✨ Gracias por visitar nuestra página de consulta de servidores! ✨</p>
+    </footer>
+</body>
+  </html>
