@@ -1,62 +1,46 @@
-document.addEventListener('DOMContentLoaded', function() {
-    
-    document.getElementById('promoMessage').style.display = 'block';
+document.getElementById('generate-btn').addEventListener('click', async () => {
+  const request = document.getElementById('plugin-request').value.trim();
+  if (!request) {
+    alert("Por favor, describe el plugin.");
+    return;
+  }
+
+  const output = document.getElementById('output');
+  const codeElement = document.getElementById('generated-code');
+  codeElement.textContent = "Generando código...";
+  output.style.display = "block";
+
+  try {
+    const response = await fetch("https://api-inference.huggingface.co/models/tu-modelo", {
+      method: "POST",
+      headers: {
+        "Authorization": "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",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ inputs: request })
+    });
+    const data = await response.json();
+    if (data.generated_text) {
+      codeElement.textContent = data.generated_text;
+    } else {
+      codeElement.textContent = "Error al generar el código.";
+    }
+  } catch (error) {
+    codeElement.textContent = "Error al conectar con la API.";
+  }
 });
 
-document.getElementById('queryForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const serverIp = document.getElementById('serverIp').value;
-    const serverPort = document.getElementById('serverPort').value || ''; // Puerto opcional
-    const serverType = document.getElementById('serverType').value;
-    const resultDiv = document.getElementById('result');
-    
- 
-    document.getElementById('promoMessage').style.display = 'none';
-
-    
-    const endpoint = serverType === 'bedrock' 
-        ? `https://api.mcsrvstat.us/bedrock/3/${serverIp}${serverPort ? ':' + serverPort : ''}`
-        : `https://api.mcsrvstat.us/3/${serverIp}${serverPort ? ':' + serverPort : ''}`;
-
-    // Realiza la consulta a la API de mcsrvstats
-    fetch(endpoint)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.online) {
-                const { hostname, players, version, motd, port, protocol, cache } = data;
-                const playersOnline = players.online || 0;
-                const playersMax = players.max || 0;
-                const motdText = motd.clean ? motd.clean.join('<br>') : "No disponible";
-
-                resultDiv.innerHTML = `
-                    <h3>${hostname || "Servidor Desconocido"}</h3>
-                    <p><strong>ServerName:</strong> ${motdText}</p>
-                    <p><strong>Jugadores:</strong> ${playersOnline} / ${playersMax}</p>
-                    <p><strong>Versión:</strong> ${version}</p>
-                    <p><strong>Dirección IP:</strong> ${serverIp}</p>
-                    <p><strong>Puerto:</strong> ${port || serverPort}</p>
-                    <p><strong>Versión del protocolo:</strong> ${protocol?.name || "No disponible"}</p>
-                    <button onclick="openMOTDCreator('${hostname}')">Abrir en creador de MOTD</button>
-                    <p class="cache-time">Consulta realizada el: ${cache ? new Date(cache * 1000).toLocaleString() : "No disponible"}</p>
-                `;
-            } else {
-                resultDiv.innerHTML = `<p>Error: El servidor está offline o no existe.</p>`;
-            }
-        })
-        .catch(error => {
-            resultDiv.innerHTML = `<p>Error al consultar el servidor. ${error.message}</p>`;
-            console.error(error);
-        });
+document.getElementById('copy-btn').addEventListener('click', () => {
+  const code = document.getElementById('generated-code').textContent;
+  navigator.clipboard.writeText(code);
+  alert("Código copiado al portapapeles.");
 });
 
-
-function openMOTDCreator(serverName) {
-    const url = `https://CraftsmanServerStatus.github.io/status`;
-    window.open(url, '_blank');
-            }
+document.getElementById('download-btn').addEventListener('click', () => {
+  const code = document.getElementById('generated-code').textContent;
+  const blob = new Blob([code], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "plugin.php";
+  link.click();
+});
