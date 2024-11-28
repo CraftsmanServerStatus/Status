@@ -14,7 +14,7 @@ document.getElementById('generate-btn').addEventListener('click', async () => {
     const response = await fetch("https://api-inference.huggingface.co/models/meta/code-llama-PHP", {
       method: "POST",
       headers: {
-        "Authorization": "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",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ inputs: request })
