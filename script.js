@@ -11,7 +11,7 @@ document.getElementById('generate-btn').addEventListener('click', async () => {
   output.style.display = "block";
 
   try {
-    const response = await fetch("https://api-inference.huggingface.co/models/tu-modelo", {
+    const response = await fetch("https://api-inference.huggingface.co/models/meta/code-llama-PHP", {
       method: "POST",
       headers: {
         "Authorization": "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",
