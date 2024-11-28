@@ -14,18 +14,23 @@ document.getElementById('generate-btn').addEventListener('click', async () => {
     const response = await fetch("https://api-inference.huggingface.co/models/meta/code-llama-PHP", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer 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",
+        "Authorization": "Bearer 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", // Tu clave API
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ inputs: request })
     });
+
+    // Log de la respuesta completa
     const data = await response.json();
+    console.log(data); // Esto te ayudará a ver qué está respondiendo la API
+
     if (data.generated_text) {
       codeElement.textContent = data.generated_text;
     } else {
       codeElement.textContent = "Error al generar el código.";
     }
   } catch (error) {
+    console.error("Error al conectar con la API:", error); // Log para depurar el error
     codeElement.textContent = "Error al conectar con la API.";
   }
 });
